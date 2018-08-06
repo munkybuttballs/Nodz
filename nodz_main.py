@@ -5,9 +5,29 @@ import json
 from Qt import QtGui, QtCore, QtWidgets
 import nodz_utils as utils
 
+defaultConfigPath = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), 'default_config.json')
 
+class NodzProperty(property):
+    """
+        A descriptor object for decorating which attributes in an arbitrary
+        class should be displayed in the NodeItem.
+    """
+    pass
 
-defaultConfigPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'default_config.json')
+class NodzSocketProperty(NodzProperty):
+    """
+        A descriptor object for decorating which attributes in an arbitrary
+        class should be displayed in the NodeItem as a Socket.
+    """
+    pass
+
+class NodzPlugProperty(NodzProperty):
+    """
+        A descriptor object for decorating which attributes in an arbitrary
+        class should be displayed in the NodeItem as a Plug.
+    """
+    pass
 
 
 class Nodz(QtWidgets.QGraphicsView):
@@ -68,6 +88,18 @@ class Nodz(QtWidgets.QGraphicsView):
         # Display options.
         self.currentState = 'DEFAULT'
         self.pressedKeys = list()
+
+        # # Right click menu:
+        # self._RCMenu = QtWidgets.QMenu()
+        # # self._RCM_AddNode = self._RCMenu.addAction("Add Node")
+        # self._RCM_DeleteSelectedNodes = self._RCMenu.addAction(
+        #     "Delete Selected Nodes")
+        # self._RCM_FocusSelectedNodes = self._RCMenu.addAction(
+        #     "Focus Selected Nodes")
+
+        # # self._RCM_AddNode.triggered.connect(self.__add_QObjectToRCMenu__)
+        # self._RCM_DeleteSelectedNodes.triggered.connect(self.delete_SelectedNodes)
+        # self._RCM_FocusSelectedNodes.triggered.connect(self._focus)
 
     def wheelEvent(self, event):
         """
@@ -303,6 +335,7 @@ class Nodz(QtWidgets.QGraphicsView):
 
         # Emit signal.
         self.signal_KeyPressed.emit(event.key())
+        super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
         """
@@ -477,7 +510,7 @@ class Nodz(QtWidgets.QGraphicsView):
 
 
     # NODES
-    def createNode(self, name='default', preset='node_default', position=None, alternate=True):
+    def createNode(self, name='default', preset='node_default', position=None, alternate=True, obj=None):
         """
         Create a new node with a given name, position and color.
 
@@ -502,12 +535,12 @@ class Nodz(QtWidgets.QGraphicsView):
         """
         # Check for name clashes
         if name in self.scene().nodes.keys():
-            print 'A node with the same name already exists : {0}'.format(name)
-            print 'Node creation aborted !'
+            print('A node with the same name already exists : {0}'.format(name))
+            print('Node creation aborted !')
             return
         else:
             nodeItem = NodeItem(name=name, alternate=alternate, preset=preset,
-                                config=self.config)
+                                config=self.config, obj=obj)
 
             # Store node in scene.
             self.scene().nodes[name] = nodeItem
@@ -519,6 +552,10 @@ class Nodz(QtWidgets.QGraphicsView):
             # Set node position.
             self.scene().addItem(nodeItem)
             nodeItem.setPos(position - nodeItem.nodeCenter)
+
+            if obj:
+
+                nodeItem.createSlotsFromObject(obj)
 
             # Emit signal.
             self.signal_NodeCreated.emit(name)
@@ -534,8 +571,8 @@ class Nodz(QtWidgets.QGraphicsView):
 
         """
         if not node in self.scene().nodes.values():
-            print 'Node object does not exist !'
-            print 'Node deletion aborted !'
+            print('Node object does not exist !')
+            print('Node deletion aborted !')
             return
 
         if node in self.scene().nodes.values():
@@ -557,8 +594,8 @@ class Nodz(QtWidgets.QGraphicsView):
 
         """
         if not node in self.scene().nodes.values():
-            print 'Node object does not exist !'
-            print 'Node edition aborted !'
+            print('Node object does not exist !')
+            print('Node edition aborted !')
             return
 
         oldName = node.name
@@ -566,8 +603,8 @@ class Nodz(QtWidgets.QGraphicsView):
         if newName != None:
             # Check for name clashes
             if newName in self.scene().nodes.keys():
-                print 'A node with the same name already exists : {0}'.format(newName)
-                print 'Node edition aborted !'
+                print('A node with the same name already exists : {0}'.format(newName))
+                print('Node edition aborted !')
                 return
             else:
                 node.name = newName
@@ -632,13 +669,13 @@ class Nodz(QtWidgets.QGraphicsView):
 
         """
         if not node in self.scene().nodes.values():
-            print 'Node object does not exist !'
-            print 'Attribute creation aborted !'
+            print('Node object does not exist !')
+            print('Attribute creation aborted !')
             return
 
         if name in node.attrs:
-            print 'An attribute with the same name already exists : {0}'.format(name)
-            print 'Attribute creation aborted !'
+            print('An attribute with the same name already exists : {0}'.format(name))
+            print('Attribute creation aborted !')
             return
 
         node._createAttribute(name=name, index=index, preset=preset, plug=plug, socket=socket, dataType=dataType, plugMaxConnections=plugMaxConnections, socketMaxConnections=socketMaxConnections)
@@ -658,8 +695,8 @@ class Nodz(QtWidgets.QGraphicsView):
 
         """
         if not node in self.scene().nodes.values():
-            print 'Node object does not exist !'
-            print 'Attribute deletion aborted !'
+            print('Node object does not exist !')
+            print('Attribute deletion aborted !')
             return
 
         node._deleteAttribute(index)
@@ -685,14 +722,14 @@ class Nodz(QtWidgets.QGraphicsView):
 
         """
         if not node in self.scene().nodes.values():
-            print 'Node object does not exist !'
-            print 'Attribute creation aborted !'
+            print('Node object does not exist !')
+            print('Attribute creation aborted !')
             return
 
         if newName != None:
             if newName in node.attrs:
-                print 'An attribute with the same name already exists : {0}'.format(newName)
-                print 'Attribute edition aborted !'
+                print('An attribute with the same name already exists : {0}'.format(newName))
+                print('Attribute edition aborted !')
                 return
             else:
                 oldName = node.attrs[index]
@@ -808,8 +845,8 @@ class Nodz(QtWidgets.QGraphicsView):
         try:
             utils._saveData(filePath=filePath, data=data)
         except:
-            print 'Invalid path : {0}'.format(filePath)
-            print 'Save aborted !'
+            print('Invalid path : {0}'.format(filePath))
+            print('Save aborted !')
             return False
 
         # Emit signal.
@@ -828,8 +865,8 @@ class Nodz(QtWidgets.QGraphicsView):
         if os.path.exists(filePath):
             data = utils._loadData(filePath=filePath)
         else:
-            print 'Invalid path : {0}'.format(filePath)
-            print 'Load aborted !'
+            print('Invalid path : {0}'.format(filePath))
+            print('Load aborted !')
             return False
 
         # Apply nodes data.
@@ -861,7 +898,7 @@ class Nodz(QtWidgets.QGraphicsView):
                 socketMaxConnections = attrData['socketMaxConnections']
 
                 # un-serialize data type if needed
-                if (isinstance(dataType, unicode) and dataType.find('<') == 0):
+                if (isinstance(dataType, str) and dataType.find('<') == 0):
                     dataType = eval(str(dataType.split('\'')[1]))
 
                 self.createAttribute(node=node,
@@ -1061,7 +1098,7 @@ class NodeItem(QtWidgets.QGraphicsItem):
 
     """
 
-    def __init__(self, name, alternate, preset, config):
+    def __init__(self, name, alternate, preset, config, obj=None):
         """
         Initialize the class.
 
@@ -1087,6 +1124,7 @@ class NodeItem(QtWidgets.QGraphicsItem):
         self.alternate = alternate
         self.nodePreset = preset
         self.attrPreset = None
+        self._object = obj
 
         # Attributes storage.
         self.attrs = list()
@@ -1099,6 +1137,11 @@ class NodeItem(QtWidgets.QGraphicsItem):
 
         # Methods.
         self._createStyle(config)
+
+    @property
+    def object(self):
+
+        return self._object
 
     @property
     def height(self):
@@ -1206,13 +1249,20 @@ class NodeItem(QtWidgets.QGraphicsItem):
 
         """
         if name in self.attrs:
-            print 'An attribute with the same name already exists on this node : {0}'.format(name)
-            print 'Attribute creation aborted !'
+            print('An attribute with the same name already exists on this node : {0}'.format(name))
+            print('Attribute creation aborted !')
             return
 
         self.attrPreset = preset
 
-        # Create a plug connection item.
+        # Create a plug connection item.)
+        if self.object:
+            WidgetItem(parent=self,
+                       attribute=name,
+                       index=self.attrCount,
+                       preset=preset,
+                       dataType=dataType)
+
         if plug:
             plugInst = PlugItem(parent=self,
                                 attribute=name,
@@ -1491,8 +1541,39 @@ class NodeItem(QtWidgets.QGraphicsItem):
 
         super(NodeItem, self).hoverLeaveEvent(event)
 
+    def createSlotsFromObject(self, obj, preset='attr_preset_1', includAllProps=False):
+        """
+        Populate the attribute slots of the this NodeItem from the given object.
 
-class SlotItem(QtWidgets.QGraphicsItem):
+        """
+
+        classObj = type(obj)
+        attributeNames = utils._getPropertiesFromClass(obj, includAllProps=includAllProps)
+        for attributeName in attributeNames:
+            attribute = getattr(classObj, attributeName)
+            if isinstance(attribute, NodzProperty):
+                isPlug = True
+                isSocket = True
+                if isinstance(attribute, NodzPlugProperty):
+                    isSocket = False
+                elif isinstance(attribute, NodzSocketProperty):
+                    isPlug = False
+
+                self._createAttribute(
+                                      name=attributeName,
+                                      index=-1,
+                                      preset=preset,
+                                      plug=isPlug,
+                                      socket=isSocket,
+                                      dataType=type(getattr(obj, attributeName)),
+                                      plugMaxConnections=1,
+                                      socketMaxConnections=1
+                                      )
+
+        # self.scene().parent().evaluateGraph()
+
+
+class SlotItem(QtWidgets.QGraphicsWidget):
 
     """
     The base class for graphics item representing attributes hook.
@@ -1663,6 +1744,14 @@ class SlotItem(QtWidgets.QGraphicsItem):
         path.addRect(self.boundingRect())
         return path
 
+    def boundingRect(self):
+        """
+        The bounding rect based on the width and height variables.
+        """
+
+        rect = QtCore.QRectF(QtCore.QRect(0, 0, self._width, self._height))
+        return rect
+
     def paint(self, painter, option, widget):
         """
         Paint the Slot.
@@ -1698,6 +1787,141 @@ class SlotItem(QtWidgets.QGraphicsItem):
                                 rect.y() + rect.height() * 0.5)
 
         return self.mapToScene(center)
+
+
+class WidgetItem(SlotItem):
+
+    """
+    A graphics item for holding a native QtWidget.
+
+    """
+
+    def __init__(self, parent, attribute, index, preset, dataType):
+        """
+        Initialize the class.
+
+        :param parent: The parent item of the slot.
+        :type  parent: QtWidgets.QGraphicsItem instance.
+
+        :param attribute: The attribute associated to the slot.
+        :type  attribute: String.
+
+        :param index: int.
+        :type  index: The index of the attribute in the node.
+
+        :type  preset: str.
+        :param preset: The name of graphical preset in the config file.
+
+        :param dataType: The data type associated to the attribute.
+        :type  dataType: Type.
+
+        """
+        super(WidgetItem, self).__init__(parent, attribute, preset, index, dataType, 0)
+
+        # Storage.
+        self.attributte = attribute
+        self.object = parent.object
+        self.preset = preset
+        self.slotType = 'plug'
+
+        # Methods.
+        self._createStyle(parent)
+
+        self._updatePos()
+
+        self.widget = None
+        self.parentLayout = QtWidgets.QGraphicsLinearLayout()
+        if dataType == int:
+
+            self.widget = QtWidgets.QSpinBox()
+            self.widget.setValue(getattr(self.object, attribute))
+            self.widget.valueChanged.connect(self._updateObjectAttribute)
+
+        elif dataType == str:
+
+            self.widget = QtWidgets.QLineEdit()
+            self.widget.setText(getattr(self.object, attribute))
+            self.widget.textChanged.connect(self._updateObjectAttribute)
+
+        comboItem = self.scene().addWidget(self.widget)
+        self.parentLayout.addItem(comboItem)
+
+        self.setLayout(self.parentLayout)
+
+    def _updateObjectAttribute(self, value):
+        
+        setattr(self.object, self.attribute, value)
+        print((self.object, self.attribute, value))
+
+    def _createStyle(self, parent):
+        """
+        Read the attribute style from the configuration file.
+
+        """
+        config = parent.scene().views()[0].config
+        self.brush = QtGui.QBrush()
+        self.brush.setStyle(QtCore.Qt.SolidPattern)
+        self.brush.setColor(utils._convertDataToColor(config[self.preset]['plug']))
+
+    def _updatePos(self):
+        """
+        Set postion of socketItem, so any attached native Qt elemnt is aligned with the socket.
+
+        """
+        config = self.scene().views()[0].config
+        parentItem = self.parentItem()
+        self._width = self._height = parentItem.attrHeight * 0.5
+        x = self._width * 3.0
+        y = (parentItem.baseHeight * 0.5 - config['node_radius'] +
+        (parentItem.attrHeight * 0.25) + self.index * parentItem.attrHeight)
+
+        self.setPos(x, y)
+
+    def connect(self, socket_item, connection):
+        """
+        Connect to the given socket_item.
+
+        """
+        if self.maxConnections>0 and len(self.connected_slots) >= self.maxConnections:
+            # Already connected.
+            self.connections[self.maxConnections-1]._remove()
+
+        # Populate connection.
+        connection.socketItem = socket_item
+        connection.plugNode = self.parentItem().name
+        connection.plugAttr = self.attribute
+
+        # Add socket to connected slots.
+        if socket_item in self.connected_slots:
+            self.connected_slots.remove(socket_item)
+        self.connected_slots.append(socket_item)
+
+        # Add connection.
+        if connection not in self.connections:
+            self.connections.append(connection)
+
+        # Emit signal.
+        nodzInst = self.scene().views()[0]
+        nodzInst.signal_PlugConnected.emit(connection.plugNode, connection.plugAttr, connection.socketNode, connection.socketAttr)
+
+    def disconnect(self, connection):
+        """
+        Disconnect the given connection from this plug item.
+
+        """
+        # Emit signal.
+        nodzInst = self.scene().views()[0]
+        nodzInst.signal_PlugDisconnected.emit(connection.plugNode, connection.plugAttr, connection.socketNode, connection.socketAttr)
+
+        # Remove connected socket from plug
+        if connection.socketItem in self.connected_slots:
+            self.connected_slots.remove(connection.socketItem)
+        # Remove connection
+        self.connections.remove(connection)
+
+    def paint(self, painter, option, widget):
+
+        pass
 
 
 class PlugItem(SlotItem):
@@ -1737,6 +1961,8 @@ class PlugItem(SlotItem):
         # Methods.
         self._createStyle(parent)
 
+        self._updatePos()
+
     def _createStyle(self, parent):
         """
         Read the attribute style from the configuration file.
@@ -1747,23 +1973,19 @@ class PlugItem(SlotItem):
         self.brush.setStyle(QtCore.Qt.SolidPattern)
         self.brush.setColor(utils._convertDataToColor(config[self.preset]['plug']))
 
-    def boundingRect(self):
+    def _updatePos(self):
         """
-        The bounding rect based on the width and height variables.
+        Set postion of socketItem, so any attached native Qt elemnt is aligned with the socket.
 
         """
-        width = height = self.parentItem().attrHeight / 2.0
+        config = self.scene().views()[0].config
+        parentItem = self.parentItem()
+        self._width = self._height = parentItem.attrHeight / 2.0
+        x = parentItem.baseWidth - (self._width / 2.0)
+        y = (parentItem.baseHeight - config['node_radius'] + 
+             parentItem.attrHeight / 4 + self.index * parentItem.attrHeight) + 5
 
-        nodzInst = self.scene().views()[0]
-        config = nodzInst.config
-
-        x = self.parentItem().baseWidth - (width / 2.0)
-        y = (self.parentItem().baseHeight - config['node_radius'] +
-             self.parentItem().attrHeight / 4 +
-             self.parentItem().attrs.index(self.attribute) * self.parentItem().attrHeight)
-
-        rect = QtCore.QRectF(QtCore.QRect(x, y, width, height))
-        return rect
+        self.setPos(x, y)
 
     def connect(self, socket_item, connection):
         """
@@ -1845,6 +2067,8 @@ class SocketItem(SlotItem):
         # Methods.
         self._createStyle(parent)
 
+        self._updatePos()
+
     def _createStyle(self, parent):
         """
         Read the attribute style from the configuration file.
@@ -1855,23 +2079,19 @@ class SocketItem(SlotItem):
         self.brush.setStyle(QtCore.Qt.SolidPattern)
         self.brush.setColor(utils._convertDataToColor(config[self.preset]['socket']))
 
-    def boundingRect(self):
+    def _updatePos(self):
         """
-        The bounding rect based on the width and height variables.
+        Set postion of socketItem, so any attached native Qt elemnt is aligned with the socket.
 
         """
-        width = height = self.parentItem().attrHeight / 2.0
+        config = self.scene().views()[0].config
+        parentItem = self.parentItem()
+        self._width = self._height = parentItem.attrHeight / 2.0
+        x = - self._width / 2.0
+        y = (parentItem.baseHeight - config['node_radius'] +
+        (parentItem.attrHeight/4) + self.index * parentItem.attrHeight)
 
-        nodzInst = self.scene().views()[0]
-        config = nodzInst.config
-
-        x = - width / 2.0
-        y = (self.parentItem().baseHeight - config['node_radius'] +
-            (self.parentItem().attrHeight/4) +
-             self.parentItem().attrs.index(self.attribute) * self.parentItem().attrHeight )
-
-        rect = QtCore.QRectF(QtCore.QRect(x, y, width, height))
-        return rect
+        self.setPos(x, y)
 
     def connect(self, plug_item, connection):
         """

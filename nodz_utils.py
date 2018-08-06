@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import inspect
 from Qt import QtCore, QtGui
 
 
@@ -39,9 +40,9 @@ def _convertDataToColor(data=None, alternate=False, av=20):
 
     # wrong
     else:
-        print 'Color from configuration is not recognized : ', data
-        print 'Can only be [R, G, B] or [R, G, B, A]'
-        print 'Using default color !'
+        print('Color from configuration is not recognized : ', data)
+        print('Can only be [R, G, B] or [R, G, B, A]')
+        print('Using default color !')
         color = QtGui.QColor(120, 120, 120)
         if alternate:
             color = QtGui.QColor(120-av, 120-av, 120-av)
@@ -113,6 +114,29 @@ def _swapListIndices(inputList, oldIndex, newIndex):
     inputList.pop(oldIndex)
     inputList.insert(newIndex, value)
 
+def _getPropertiesFromClass(inClass, excludeList=[], includAllProps=False):
+    """
+    Returns an list of properties in a class.
+
+    """
+
+    if hasattr(inClass, "__dict__"):
+
+        excludeList = set(excludeList + ["im_class", "im_self", "im_func"])
+        if includAllProps:
+            
+            return [item[0] for item in inspect.getmembers(inClass) if not item[0].startswith("__")
+            and not inspect.ismethod(item[1]) and item[0] not in excludeList]
+
+        else:
+
+            return [item[0] for item in inspect.getmembers(inClass) if not item[0].startswith("_")
+            and not inspect.ismethod(item[1]) and item[0] not in excludeList]
+
+    else:
+
+        return None
+
 # IO
 def _loadConfig(filePath):
     """
@@ -150,7 +174,7 @@ def _saveData(filePath, data):
                        ensure_ascii=False))
     f.close()
 
-    print "Data successfully saved !"
+    print("Data successfully saved !")
 
 def _loadData(filePath):
     """
@@ -165,6 +189,6 @@ def _loadData(filePath):
 
     json_file.close()
 
-    print "Data successfully loaded !"
+    print("Data successfully loaded !")
     return j_data
 

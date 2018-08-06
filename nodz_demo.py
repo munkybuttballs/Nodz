@@ -20,94 +20,94 @@ nodz.show()
 # Nodes
 @QtCore.Slot(str)
 def on_nodeCreated(nodeName):
-    print 'node created : ', nodeName
+    print('node created : ', nodeName)
 
 @QtCore.Slot(str)
 def on_nodeDeleted(nodeName):
-    print 'node deleted : ', nodeName
+    print('node deleted : ', nodeName)
 
 @QtCore.Slot(str, str)
 def on_nodeEdited(nodeName, newName):
-    print 'node edited : {0}, new name : {1}'.format(nodeName, newName)
+    print('node edited : {0}, new name : {1}'.format(nodeName, newName))
 
 @QtCore.Slot(str)
 def on_nodeSelected(nodesName):
-    print 'node selected : ', nodesName
+    print('node selected : ', nodesName)
 
 @QtCore.Slot(str, object)
 def on_nodeMoved(nodeName, nodePos):
-    print 'node {0} moved to {1}'.format(nodeName, nodePos)
+    print('node {0} moved to {1}'.format(nodeName, nodePos))
 
 @QtCore.Slot(str)
 def on_nodeDoubleClick(nodeName):
-    print 'double click on node : {0}'.format(nodeName)
+    print('double click on node : {0}'.format(nodeName))
 
 # Attrs
 @QtCore.Slot(str, int)
 def on_attrCreated(nodeName, attrId):
-    print 'attr created : {0} at index : {1}'.format(nodeName, attrId)
+    print('attr created : {0} at index : {1}'.format(nodeName, attrId))
 
 @QtCore.Slot(str, int)
 def on_attrDeleted(nodeName, attrId):
-    print 'attr Deleted : {0} at old index : {1}'.format(nodeName, attrId)
+    print('attr Deleted : {0} at old index : {1}'.format(nodeName, attrId))
 
 @QtCore.Slot(str, int, int)
 def on_attrEdited(nodeName, oldId, newId):
-    print 'attr Edited : {0} at old index : {1}, new index : {2}'.format(nodeName, oldId, newId)
+    print('attr Edited : {0} at old index : {1}, new index : {2}'.format(nodeName, oldId, newId))
 
 # Connections
 @QtCore.Slot(str, str, str, str)
 def on_connected(srcNodeName, srcPlugName, destNodeName, dstSocketName):
-    print 'connected src: "{0}" at "{1}" to dst: "{2}" at "{3}"'.format(srcNodeName, srcPlugName, destNodeName, dstSocketName)
+    print('connected src: "{0}" at "{1}" to dst: "{2}" at "{3}"'.format(srcNodeName, srcPlugName, destNodeName, dstSocketName))
 
 @QtCore.Slot(str, str, str, str)
 def on_disconnected(srcNodeName, srcPlugName, destNodeName, dstSocketName):
-    print 'disconnected src: "{0}" at "{1}" from dst: "{2}" at "{3}"'.format(srcNodeName, srcPlugName, destNodeName, dstSocketName)
+    print('disconnected src: "{0}" at "{1}" from dst: "{2}" at "{3}"'.format(srcNodeName, srcPlugName, destNodeName, dstSocketName))
 
 # Graph
 @QtCore.Slot()
 def on_graphSaved():
-    print 'graph saved !'
+    print('graph saved !')
 
 @QtCore.Slot()
 def on_graphLoaded():
-    print 'graph loaded !'
+    print('graph loaded !')
 
 @QtCore.Slot()
 def on_graphCleared():
-    print 'graph cleared !'
+    print('graph cleared !')
 
 @QtCore.Slot()
 def on_graphEvaluated():
-    print 'graph evaluated !'
+    print('graph evaluated !')
 
 # Other
 @QtCore.Slot(object)
 def on_keyPressed(key):
-    print 'key pressed : ', key
+    print('key pressed : ', key)
 
-nodz.signal_NodeCreated.connect(on_nodeCreated)
-nodz.signal_NodeDeleted.connect(on_nodeDeleted)
-nodz.signal_NodeEdited.connect(on_nodeEdited)
-nodz.signal_NodeSelected.connect(on_nodeSelected)
-nodz.signal_NodeMoved.connect(on_nodeMoved)
-nodz.signal_NodeDoubleClicked.connect(on_nodeDoubleClick)
+# nodz.signal_NodeCreated.connect(on_nodeCreated)
+# nodz.signal_NodeDeleted.connect(on_nodeDeleted)
+# nodz.signal_NodeEdited.connect(on_nodeEdited)
+# nodz.signal_NodeSelected.connect(on_nodeSelected)
+# nodz.signal_NodeMoved.connect(on_nodeMoved)
+# nodz.signal_NodeDoubleClicked.connect(on_nodeDoubleClick)
 
-nodz.signal_AttrCreated.connect(on_attrCreated)
-nodz.signal_AttrDeleted.connect(on_attrDeleted)
-nodz.signal_AttrEdited.connect(on_attrEdited)
+# nodz.signal_AttrCreated.connect(on_attrCreated)
+# nodz.signal_AttrDeleted.connect(on_attrDeleted)
+# nodz.signal_AttrEdited.connect(on_attrEdited)
 
-nodz.signal_PlugConnected.connect(on_connected)
-nodz.signal_SocketConnected.connect(on_connected)
-nodz.signal_PlugDisconnected.connect(on_disconnected)
-nodz.signal_SocketDisconnected.connect(on_disconnected)
+# nodz.signal_PlugConnected.connect(on_connected)
+# nodz.signal_SocketConnected.connect(on_connected)
+# nodz.signal_PlugDisconnected.connect(on_disconnected)
+# nodz.signal_SocketDisconnected.connect(on_disconnected)
 
-nodz.signal_GraphSaved.connect(on_graphSaved)
-nodz.signal_GraphLoaded.connect(on_graphLoaded)
-nodz.signal_GraphCleared.connect(on_graphCleared)
-nodz.signal_GraphEvaluated.connect(on_graphEvaluated)
+# nodz.signal_GraphSaved.connect(on_graphSaved)
+# nodz.signal_GraphLoaded.connect(on_graphLoaded)
+# nodz.signal_GraphCleared.connect(on_graphCleared)
+# nodz.signal_GraphEvaluated.connect(on_graphEvaluated)
 
-nodz.signal_KeyPressed.connect(on_keyPressed)
+# nodz.signal_KeyPressed.connect(on_keyPressed)
 
 
 ######################################################################
@@ -181,6 +181,48 @@ nodz.createAttribute(node=nodeC, name='Cattr7', index=-1, preset='attr_preset_3'
 nodz.createAttribute(node=nodeC, name='Cattr8', index=-1, preset='attr_preset_3',
                      plug=True, socket=False, dataType=int)
 
+class NodzTestClass(object):
+    """
+    """
+    def __init__(self):
+
+        super().__init__()
+        self._Dattr1 = "1"
+        self._Dattr2 = 2
+        self._Dattr3 = 3
+
+    @nodz_main.NodzProperty
+    def Dattr1(self):
+
+        return self._Dattr1
+
+    @Dattr1.setter
+    def Dattr1(self, inObj):
+        
+        self._Dattr1 = inObj
+
+    @nodz_main.NodzPlugProperty
+    def Dattr2(self):
+
+        return self._Dattr2
+
+    @Dattr2.setter
+    def Dattr2(self, inObj):
+        
+        self._Dattr2 = inObj
+
+    @nodz_main.NodzSocketProperty
+    def Dattr3(self):
+
+        return self._Dattr3
+
+    @Dattr3.setter
+    def Dattr3(self, inObj):
+        
+        self._Dattr3 = inobj
+
+nodzTestClass = NodzTestClass()
+nodeD = nodz.createNode(name='nodeD', preset='node_preset_1', obj=nodzTestClass)
 
 # Please note that this is a local test so once the graph is cleared
 # and reloaded, all the local variables are not valid anymore, which
@@ -196,27 +238,28 @@ nodz.editAttribute(node=nodeC, index=0, newName=None, newIndex=-1)
 nodz.editAttribute(node=nodeC, index=-1, newName='NewAttrName', newIndex=None)
 
 # Attributes Deletion
-nodz.deleteAttribute(node=nodeC, index=-1)
+# nodz.deleteAttribute(node=nodeC, index=-1)
 
 
 # Nodes Edition
 nodz.editNode(node=nodeC, newName='newNodeName')
 
 # Nodes Deletion
-nodz.deleteNode(node=nodeC)
-
+# nodz.deleteNode(node=nodeC)
 
 # Graph
-print nodz.evaluateGraph()
+print(nodz.evaluateGraph())
 
-nodz.saveGraph(filePath='Enter your path')
+# nodz.saveGraph(filePath='Enter your path')
 
-nodz.clearGraph()
+# nodz.clearGraph()
 
-nodz.loadGraph(filePath='Enter your path')
+# nodz.loadGraph(filePath='Enter your path')
 
 
+print(app)
 
 if app:
     # command line stand alone test... run our own event loop
     app.exec_()
+    # app.show()

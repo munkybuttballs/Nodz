@@ -1,0 +1,234 @@
+{
+    "CONNECTIONS": [
+        [
+            "nodeB.Battr1",
+            "nodeA.Aattr4"
+        ],
+        [
+            "nodeB.Battr2",
+            "nodeA.Aattr3"
+        ]
+    ],
+    "NODES": {
+        "newNodeName": {
+            "alternate": true,
+            "attributes": [
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Cattr2",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "Cattr3",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "Cattr4",
+                    "plug": false,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_2",
+                    "socket": true,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Cattr5",
+                    "plug": false,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_2",
+                    "socket": true,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "Cattr6",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_3",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "Cattr7",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_3",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Cattr8",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_3",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                }
+            ],
+            "position": [
+                899.0,
+                986.5
+            ],
+            "preset": "node_preset_1"
+        },
+        "nodeA": {
+            "alternate": true,
+            "attributes": [
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "Aattr1",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Aattr2",
+                    "plug": false,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Aattr3",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_2",
+                    "socket": true,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "Aattr4",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_2",
+                    "socket": true,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Aattr5",
+                    "plug": true,
+                    "plugMaxConnections": 1,
+                    "preset": "attr_preset_3",
+                    "socket": true,
+                    "socketMaxConnections": -1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Aattr6",
+                    "plug": true,
+                    "plugMaxConnections": 1,
+                    "preset": "attr_preset_3",
+                    "socket": true,
+                    "socketMaxConnections": -1
+                }
+            ],
+            "position": [
+                899.0,
+                986.5
+            ],
+            "preset": "node_preset_1"
+        },
+        "nodeB": {
+            "alternate": true,
+            "attributes": [
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "Battr1",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Battr2",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Battr3",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_2",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'int'>",
+                    "name": "Battr4",
+                    "plug": true,
+                    "plugMaxConnections": 1,
+                    "preset": "attr_preset_3",
+                    "socket": false,
+                    "socketMaxConnections": -1
+                }
+            ],
+            "position": [
+                899.0,
+                986.5
+            ],
+            "preset": "node_preset_1"
+        },
+        "nodeD": {
+            "alternate": true,
+            "attributes": [
+                {
+                    "dataType": "<class 'nodz_main.NodzProperty'>",
+                    "name": "attribue1",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": true,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'nodz_main.NodzPlugProperty'>",
+                    "name": "attribue2",
+                    "plug": true,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": false,
+                    "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'nodz_main.NodzSocketProperty'>",
+                    "name": "attribue3",
+                    "plug": false,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": true,
+                    "socketMaxConnections": 1
+                }
+            ],
+            "position": [
+                899.0,
+                986.5
+            ],
+            "preset": "node_preset_1"
+        }
+    }
+}
