@@ -78,7 +78,7 @@ def on_graphCleared():
     print('graph cleared !')
 
 @QtCore.Slot()
-def on_graphEvaluated():
+def on_graphEvaluated(): 
     print('graph evaluated !')
 
 # Other
@@ -219,7 +219,7 @@ class NodzTestClass(object):
     @Dattr3.setter
     def Dattr3(self, inObj):
         
-        self._Dattr3 = inobj
+        self._Dattr3 = inObj
 
 nodzTestClass = NodzTestClass()
 nodeD = nodz.createNode(name='nodeD', preset='node_preset_1', obj=nodzTestClass)
@@ -248,16 +248,44 @@ nodz.editNode(node=nodeC, newName='newNodeName')
 # nodz.deleteNode(node=nodeC)
 
 # Graph
-print(nodz.evaluateGraph())
+nodz.evaluateGraph()
 
-# nodz.saveGraph(filePath='Enter your path')
+# g = globals()
+l = locals()
+# for obj in g: print(obj)
+for obj in l: print(obj)
+
+# nodz.saveGraph(filePath=r"C:\Users\Sheaky\Documents\graph.json")
 
 # nodz.clearGraph()
 
-# nodz.loadGraph(filePath='Enter your path')
+# nodz.loadGraph(filePath=r"C:\Users\Sheaky\Documents\graph.json")
 
+# import os
+# import jsonpickle
+# import pickle
+# # for obj in dir(jsonpickle): print(obj)
+# jsonpickle.set_preferred_backend('json')
+# jsonpickle.set_encoder_options('json', sort_keys=False, indent=4, ensure_ascii=False)
+# jsonpickle.set_decoder_options('json', encoding="UTF-8")
+# # print(nodz.scene().nodes)
+# node = nodz.scene().nodes["nodeA"]
+# nodePickle = jsonpickle.encode([node], unpicklable=True)
+# # nodePickle = pickle.dumps(node)
+# # nodePickle = jsonpickle.dumps(["this is working"], unpicklable=True)
+# # print(nodePickle)
+# print("---------------------------------------------")
+# node = jsonpickle.decode(nodePickle, keys=True, classes=[nodz_main.NodeItem])
+# # node = pickle.loads(nodePickle)
+# print(node)
+# # super(nodz_main.NodeScene, scene).__init__(nodz)
+# # nodz.setScene(scene)
+# # print(scene.nodes)
 
-print(app)
+# # filePath = r"C:\Users\Sheaky\Documents\graph.json"
+# # if os.path.exists(filePath):
+# #         with open(filePath, "w") as file:
+# #             file.write(jsonpickle.encode(nodz.scene()))
 
 if app:
     # command line stand alone test... run our own event loop

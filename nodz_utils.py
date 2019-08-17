@@ -2,7 +2,10 @@ import os
 import json
 import re
 import inspect
-from Qt import QtCore, QtGui
+from Qt import QtWidgets, QtCore, QtGui
+import nodz_standardui as stdui
+import importlib
+importlib.reload(stdui)
 
 
 def _convertDataToColor(data=None, alternate=False, av=20):
@@ -114,7 +117,7 @@ def _swapListIndices(inputList, oldIndex, newIndex):
     inputList.pop(oldIndex)
     inputList.insert(newIndex, value)
 
-def _getPropertiesFromClass(inClass, excludeList=[], includAllProps=False):
+def _getAttributeNames(inClass, excludeList=[], includAllProps=False):
     """
     Returns an list of properties in a class.
 
@@ -136,6 +139,24 @@ def _getPropertiesFromClass(inClass, excludeList=[], includAllProps=False):
     else:
 
         return None
+
+def _getStandardUIFromType(inType):
+    """
+    Get the ui class from the nodz_standardui
+    library that reprisents the given type.
+    
+    """
+
+    for attributeName in _getAttributeNames(stdui):
+
+        obj = getattr(stdui, attributeName)
+        if hasattr(obj, "classList"):
+
+            if inType in obj.classList:
+
+                return obj
+
+    return None
 
 # IO
 def _loadConfig(filePath):
@@ -167,12 +188,13 @@ def _saveData(filePath, data):
     :type  data: Dict or List.
 
     """
-    f = open(filePath, "w")
-    f.write(json.dumps(data,
-                       sort_keys = True,
-                       indent = 4,
-                       ensure_ascii=False))
-    f.close()
+
+    if os.path.exists(filePath):
+        with open(filePath, "w") as file:
+            file.write(json.dumps(data,
+                               sort_keys = True,
+                               indent = 4,
+                               ensure_ascii=False))
 
     print("Data successfully saved !")
 
@@ -187,8 +209,9 @@ def _loadData(filePath):
     with open(filePath) as json_file:
         j_data = json.load(json_file)
 
-    json_file.close()
-
     print("Data successfully loaded !")
     return j_data
 
+if __name__ == '__main__':
+
+    print(_getStandardUIFromType(int))

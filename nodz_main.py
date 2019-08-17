@@ -4,31 +4,31 @@ import json
 
 from Qt import QtGui, QtCore, QtWidgets
 import nodz_utils as utils
+import nodz_standardui as stdui
 
 defaultConfigPath = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), 'default_config.json')
 
 class NodzProperty(property):
     """
-        A descriptor object for decorating which attributes in an arbitrary
-        class should be displayed in the NodeItem.
+    A descriptor object for decorating which attributes in an arbitrary
+    class should be displayed in the NodeItem.
     """
     pass
 
 class NodzSocketProperty(NodzProperty):
     """
-        A descriptor object for decorating which attributes in an arbitrary
-        class should be displayed in the NodeItem as a Socket.
+    A descriptor object for decorating which attributes in an arbitrary
+    class should be displayed in the NodeItem as a Socket.
     """
     pass
 
 class NodzPlugProperty(NodzProperty):
     """
-        A descriptor object for decorating which attributes in an arbitrary
-        class should be displayed in the NodeItem as a Plug.
+    A descriptor object for decorating which attributes in an arbitrary
+    class should be displayed in the NodeItem as a Plug.
     """
     pass
-
 
 class Nodz(QtWidgets.QGraphicsView):
 
@@ -321,21 +321,24 @@ class Nodz(QtWidgets.QGraphicsView):
         F - Focus view on the selection
 
         """
+
         if event.key() not in self.pressedKeys:
             self.pressedKeys.append(event.key())
 
-        if event.key() in (QtCore.Qt.Key_Delete, QtCore.Qt.Key_Backspace):
-            self._deleteSelectedNodes()
+        if not self.scene().subWidgetFocused:
 
-        if event.key() == QtCore.Qt.Key_F:
-            self._focus()
+            if event.key() in (QtCore.Qt.Key_Delete, QtCore.Qt.Key_Backspace):
+                self._deleteSelectedNodes()
 
-        if event.key() == QtCore.Qt.Key_S:
-            self._nodeSnap = True
+            if event.key() == QtCore.Qt.Key_F:
+                self._focus()
+
+            if event.key() == QtCore.Qt.Key_S:
+                self._nodeSnap = True
 
         # Emit signal.
         self.signal_KeyPressed.emit(event.key())
-        super().keyPressEvent(event)
+        super(Nodz, self).keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
         """
@@ -844,13 +847,15 @@ class Nodz(QtWidgets.QGraphicsView):
         # Save data.
         try:
             utils._saveData(filePath=filePath, data=data)
+            # Emit signal.
+            self.signal_GraphSaved.emit()
+            return True
+
         except:
             print('Invalid path : {0}'.format(filePath))
             print('Save aborted !')
             return False
 
-        # Emit signal.
-        self.signal_GraphSaved.emit()
 
     def loadGraph(self, filePath='path'):
         """
@@ -1026,6 +1031,8 @@ class NodeScene(QtWidgets.QGraphicsScene):
 
         # Nodes storage.
         self.nodes = dict()
+
+        self.subWidgetFocused = False
 
     def dragEnterEvent(self, event):
         """
@@ -1548,7 +1555,7 @@ class NodeItem(QtWidgets.QGraphicsItem):
         """
 
         classObj = type(obj)
-        attributeNames = utils._getPropertiesFromClass(obj, includAllProps=includAllProps)
+        attributeNames = utils._getAttributeNames(obj, includAllProps=includAllProps)
         for attributeName in attributeNames:
             attribute = getattr(classObj, attributeName)
             if isinstance(attribute, NodzProperty):
@@ -1830,23 +1837,17 @@ class WidgetItem(SlotItem):
         self._updatePos()
 
         self.widget = None
-        self.parentLayout = QtWidgets.QGraphicsLinearLayout()
-        if dataType == int:
+        uiClass = utils._getStandardUIFromType(dataType)
+        if uiClass:
 
-            self.widget = QtWidgets.QSpinBox()
-            self.widget.setValue(getattr(self.object, attribute))
-            self.widget.valueChanged.connect(self._updateObjectAttribute)
+            self.widget       = uiClass(self.scene())
+            self.parentLayout = QtWidgets.QGraphicsLinearLayout()
+            self.widgetScene  = self.scene().addWidget(self.widget)
+            self.setLayout(self.parentLayout)
+            self.parentLayout.addItem(self.widgetScene)
+            self.widget._setValue(getattr(self.object, attribute))
+            self.widget._connectUpdateObjectAttribute(self._updateObjectAttribute)
 
-        elif dataType == str:
-
-            self.widget = QtWidgets.QLineEdit()
-            self.widget.setText(getattr(self.object, attribute))
-            self.widget.textChanged.connect(self._updateObjectAttribute)
-
-        comboItem = self.scene().addWidget(self.widget)
-        self.parentLayout.addItem(comboItem)
-
-        self.setLayout(self.parentLayout)
 
     def _updateObjectAttribute(self, value):
         

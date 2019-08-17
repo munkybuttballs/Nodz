@@ -75,6 +75,15 @@
                     "preset": "attr_preset_3",
                     "socket": false,
                     "socketMaxConnections": 1
+                },
+                {
+                    "dataType": "<class 'str'>",
+                    "name": "NewAttrName",
+                    "plug": false,
+                    "plugMaxConnections": -1,
+                    "preset": "attr_preset_1",
+                    "socket": true,
+                    "socketMaxConnections": 1
                 }
             ],
             "position": [
@@ -197,28 +206,28 @@
             "alternate": true,
             "attributes": [
                 {
-                    "dataType": "<class 'nodz_main.NodzProperty'>",
-                    "name": "attribue1",
+                    "dataType": "<class 'str'>",
+                    "name": "Dattr1",
                     "plug": true,
-                    "plugMaxConnections": -1,
+                    "plugMaxConnections": 1,
                     "preset": "attr_preset_1",
                     "socket": true,
                     "socketMaxConnections": 1
                 },
                 {
-                    "dataType": "<class 'nodz_main.NodzPlugProperty'>",
-                    "name": "attribue2",
+                    "dataType": "<class 'int'>",
+                    "name": "Dattr2",
                     "plug": true,
-                    "plugMaxConnections": -1,
+                    "plugMaxConnections": 1,
                     "preset": "attr_preset_1",
                     "socket": false,
                     "socketMaxConnections": 1
                 },
                 {
-                    "dataType": "<class 'nodz_main.NodzSocketProperty'>",
-                    "name": "attribue3",
+                    "dataType": "<class 'int'>",
+                    "name": "Dattr3",
                     "plug": false,
-                    "plugMaxConnections": -1,
+                    "plugMaxConnections": 1,
                     "preset": "attr_preset_1",
                     "socket": true,
                     "socketMaxConnections": 1
